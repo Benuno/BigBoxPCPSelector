@@ -13,19 +13,24 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" FontSize="30" Margin="15,5,15,0" FontWeight="ExtraBold">
+                    <TextBlock Text="{Binding ItemDescription}"                                
+                               Margin="15,5,15,0">
                         <TextBlock.Style>
-                        <Style TargetType="{x:Type TextBlock}">
-                            <Setter Property="Background" Value="Transparent"/>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Background" Value="Transparent"/>
                                 <Setter Property="Foreground" Value="#D3D3D3"/>
+                                <Setter Property="FontWeight" Value="Normal"/>
+                                <Setter Property="FontSize" Value="30"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding WheelIsActive}" Value="True" >
-                                    <Setter Property="Background" Value="White"/>
-                                    <Setter Property="Foreground" Value="Black"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                            </TextBlock.Style>
+                                    <DataTrigger Binding="{Binding IsSelected}" Value="True" >
+                                        <Setter Property="Background" Value="White"/>
+                                        <Setter Property="Foreground" Value="Black"/>
+                                        <Setter Property="FontWeight" Value="ExtraBold"/>
+                                        <Setter Property="FontSize" Value="40"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
                     </TextBlock>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

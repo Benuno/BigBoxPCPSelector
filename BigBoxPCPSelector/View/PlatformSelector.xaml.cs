@@ -1,180 +1,63 @@
 ﻿using BigBoxPCPSelector.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Unbroken.LaunchBox.Plugins;
 using Unbroken.LaunchBox.Plugins.Data;
 
 namespace BigBoxPCPSelector.View
 {
-    /// <summary>
-    /// Interaction logic for PlatformSelector.xaml
-    /// </summary>
     public partial class PlatformSelector : UserControl, IBigBoxThemeElementPlugin
     {
-        public bool switchPlatform = false;
-        public bool categoryLock = false;
-        public string startName = null;
-        public string lastCategory = null;
-        public bool gameDetails = false;
-        public string key = null;
+        private readonly PlatformSelectorViewModel platformSelectorViewModel = PlatformSelectorViewModel.Instance();
 
         public PlatformSelector()
         {
             InitializeComponent();
-            DataContext = PlatformSelectorViewModel.Instance();
-            
+            DataContext = platformSelectorViewModel;
         }
 
         public bool OnEnter()
         {
-            this.key = "enter";
-            if (this.switchPlatform)
-            {
-                this.switchPlatform = false;
-                PlatformSelectorViewModel.Instance().ShowPlatform(this.startName);
-                return true;
-            }
-            else
-            {                
-                return false;
-
-            }
+            return platformSelectorViewModel.OnEnter();
         }
 
         public bool OnEscape()
         {
-            this.key = "escape";
-            if (this.switchPlatform && this.gameDetails==false) //&& !this.UseType.Equals("False"))
-            {
-                this.switchPlatform = false;
-                PlatformSelectorViewModel.Instance().escapeKey();
-                return false;
-            }
-            else
-            {
-                if (this.switchPlatform == false && this.gameDetails==false)
-                {
-                    this.switchPlatform = true;
-                    return true;
-                }
-                return false;
-            }
+            return platformSelectorViewModel.OnEscape();
         }
 
         public bool OnDown(bool held)
         {
-            this.switchPlatform = false;
-            this.key = "down";
-            return false;
+            return platformSelectorViewModel.OnDown(held);
         }
 
         public bool OnUp(bool held)
         {
-            this.key = "up";
-            this.switchPlatform = false;
-            return false;
+            return platformSelectorViewModel.OnUp(held);
         }
+
         public bool OnLeft(bool held)
         {
-            this.key = "left";
-            if (this.switchPlatform)
-            {
-                PlatformSelectorViewModel.Instance().CycleLeft();
-                
-                
-                return true;
-            }
-            return false;
-            
+            return platformSelectorViewModel.OnLeft(held);
         }
 
         public bool OnPageDown()
         {
-            this.key = "pageDown";
-            return false;
+            return platformSelectorViewModel.OnPageDown();
         }
 
         public bool OnPageUp()
         {
-            this.key = "pageUp";
-            return false;
+            return platformSelectorViewModel.OnPageUp();
         }
 
         public bool OnRight(bool held)
         {
-            if (this.switchPlatform)
-            {
-                PlatformSelectorViewModel.Instance().CycleRight();
-               
-                return true;
-            }
-            return false;
+            return platformSelectorViewModel.OnRight(held);
         }
 
         public void OnSelectionChanged(FilterType filterType, string filterValue, IPlatform platform, IPlatformCategory category, IPlaylist playlist, IGame game)
         {
-                if (playlist != null)
-                {
-                    startName = playlist.Name;
-                
-                    IList<IPlaylist> childs = PluginHelper.DataManager.GetAllPlaylists();
-
-                    List<String> names = new List<String>();
-                    foreach (IPlaylist child in childs)
-                    {
-                        names.Add(child.Name);
-                    }
-                    names.Sort();
-
-                    var foundEntry = names.Where(X => X == startName).FirstOrDefault();
-
-                    if (foundEntry != null && names.Count > 1)
-                    {
-                        int entryIndex = names.IndexOf(foundEntry);
-                        List<String> addToEnd = names.GetRange(0, entryIndex);
-                        names.AddRange(addToEnd);
-                        names.RemoveRange(0, entryIndex);
-                        
-                    }
-
-                    PlatformSelectorViewModel.Instance().setActiveList(names);
-                }
-                else
-                {
-                    startName = platform.Name;
-                    IList<IPlatform> childs = PluginHelper.DataManager.GetAllPlatforms();
-
-                    List<String> names = new List<String>();
-                    foreach (IPlatform child in childs)
-                    {
-                        names.Add(child.Name);
-                    }
-                    names.Sort();
-
-                    var foundEntry = names.Where(X => X == startName).FirstOrDefault();
-
-                    if (foundEntry != null && names.Count > 1)
-                    {
-                        int entryIndex = names.IndexOf(foundEntry);
-                    List<String> addToEnd = names.GetRange(0, entryIndex);
-                    names.AddRange(addToEnd);
-                    names.RemoveRange(0, entryIndex);
-                }
-
-                    PlatformSelectorViewModel.Instance().setActiveList(names);
-                }
+            platformSelectorViewModel.OnSelectionChanged(filterType, filterValue, platform, category, playlist, game);
         }
-      
     }
 }

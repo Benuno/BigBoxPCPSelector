@@ -1,93 +1,269 @@
-﻿using System;
+﻿using BigBoxPCPSelector.Helper;
+using BigBoxPCPSelector.Model;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
 using Unbroken.LaunchBox.Plugins;
 using Unbroken.LaunchBox.Plugins.Data;
 
 namespace BigBoxPCPSelector.ViewModel
 {
-
     public sealed class PlatformSelectorViewModel
     {
-        public ObservableCollection<String> ActiveList { get; }
+        public ObservableCollection<SelectorItem> ActiveList { get; }
         public bool WheelIsActive { get; }
-        public List<String> originalList { get; set; }
+        public List<SelectorItem> OriginalList { get; set; }
+        public bool switchPlatform = false;
+        public string startName = null;
+
         private PlatformSelectorViewModel()
         {
-            ActiveList = new ObservableCollection<String>(new List<String>{""});
-            originalList = new List<string>();
+            ActiveList = new ObservableCollection<SelectorItem>();
+            OriginalList = new List<SelectorItem>();
             WheelIsActive = true;
         }
 
         internal void CycleLeft()
         {
-            if(ActiveList.Count > 1)
+            if (ActiveList.Count > 1)
             {
-                String lastPlatform = ActiveList[ActiveList.Count - 1];
-                ActiveList.Insert(0, lastPlatform);
-                ActiveList.RemoveAt(ActiveList.Count - 1);
-            }
-               
+                setItemSelection(0, false);
 
+                SelectorItem lastItem = ActiveList[ActiveList.Count - 1];
+                ActiveList.Insert(0, lastItem);
+                ActiveList.RemoveAt(ActiveList.Count - 1);
+
+                setItemSelection(0, true);
+            }
+        }
+
+        internal bool OnDown(bool held)
+        {
+            switchPlatform = false;
+            return false;
+        }
+
+        internal bool OnUp(bool held)
+        {
+            switchPlatform = false;
+            return false;
+        }
+
+        internal bool OnLeft(bool held)
+        {
+            if (switchPlatform)
+            {
+                CycleLeft();
+                return true;
+            }
+            return false;
+        }
+
+        internal bool OnPageDown()
+        {
+            return false;
+        }
+
+        internal bool OnRight(bool held)
+        {
+            if (switchPlatform)
+            {
+                CycleRight();
+                return true;
+            }
+            return false;
+        }
+
+        internal void OnSelectionChanged(FilterType filterType, string filterValue, IPlatform platform, IPlatformCategory category, IPlaylist playlist, IGame game)
+        {
+            try
+            {
+                if (playlist != null)
+                {
+                    startName = playlist.Name;
+
+                    IList<IPlaylist> childs = PluginHelper.DataManager.GetAllPlaylists();
+
+                    List<SelectorItem> items = new List<SelectorItem>();
+
+                    foreach (IPlaylist child in childs)
+                    {
+                        items.Add(new SelectorItem()
+                        {
+                            IsSelected = false,
+                            ItemDescription = child.Name,
+                            ItemType = SelectorItemType.Playlist
+                        });
+                    }
+
+                    var itemQuery = from item in items
+                                    orderby item.ItemDescription
+                                    select item;
+
+                    items = itemQuery.ToList();
+
+                    SelectorItem foundEntry = items.FirstOrDefault(item => item.ItemDescription == startName);
+
+                    if (foundEntry != null && items.Count > 1)
+                    {
+                        int entryIndex = items.IndexOf(foundEntry);
+
+                        List<SelectorItem> addToEnd = items.GetRange(0, entryIndex);
+
+                        items.AddRange(addToEnd);
+                        items.RemoveRange(0, entryIndex);
+                    }
+
+                    SetActiveList(items);
+                }
+                else
+                {
+                    startName = platform.Name;
+                    IList<IPlatform> childs = PluginHelper.DataManager.GetAllPlatforms();
+
+                    List<SelectorItem> items = new List<SelectorItem>();
+                    foreach (IPlatform child in childs)
+                    {
+                        items.Add(new SelectorItem()
+                        {
+                            IsSelected = false,
+                            ItemDescription = child.Name,
+                            ItemType = SelectorItemType.Platform
+                        });
+                    }
+
+                    var itemQuery = from item in items
+                                    orderby item.ItemDescription
+                                    select item;
+
+                    items = itemQuery.ToList();
+
+                    SelectorItem foundEntry = items.FirstOrDefault(item => item.ItemDescription == startName);
+
+                    if (foundEntry != null && items.Count > 1)
+                    {
+                        int entryIndex = items.IndexOf(foundEntry);
+
+                        List<SelectorItem> addToEnd = items.GetRange(0, entryIndex);
+
+                        items.AddRange(addToEnd);
+                        items.RemoveRange(0, entryIndex);
+                    }
+
+                    SetActiveList(items);
+                }
+            }
+            catch(Exception ex)
+            {
+                LogHelper.LogException(ex, "OnSelectionChanged");
+            }
+        }
+
+        internal bool OnPageUp()
+        {
+            return false;
+        }
+
+
+        internal bool OnEscape()
+        {
+            if (switchPlatform)
+            {
+                switchPlatform = false;
+                EscapeKey();
+                return false;
+            }
+            else
+            {
+                switchPlatform = true;
+                setItemSelection(0, true);
+                return true;
+            }
+        }
+
+        internal bool OnEnter()
+        {
+            if (switchPlatform)
+            {
+                switchPlatform = false;
+                ShowPlatform(startName);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         internal void CycleRight()
         {
             if (ActiveList.Count > 1)
             {
-                String firstPlatform = ActiveList[0];
-                ActiveList.Add(firstPlatform);
+                setItemSelection(0, false);
+
+                SelectorItem firstItem = ActiveList[0];
+                ActiveList.Add(firstItem);
                 ActiveList.RemoveAt(0);
-            }
 
+                setItemSelection(0, true);
+            }
         }
 
-        internal void ShowPlatform(String startName)
+        private void setItemSelection(int index, bool selected)
         {
-            String firstPlatform = ActiveList[0];
-            if (ActiveList.Count > 0)// && !startName.Equals(firstPlatform))
-            { 
-                PluginHelper.BigBoxMainViewModel.ShowGames(FilterType.PlatformOrCategoryOrPlaylist, firstPlatform);
-            }
-                
+            SelectorItem item = ActiveList[index];
+            item.IsSelected = selected;
         }
 
-        //internal void setWheelActive(bool isActive)
-        //{
-        //    WheelIsActive = isActive;
-        //}
+        internal void ShowPlatform(string startName)
+        {
+            SelectorItem firstItem = ActiveList[0];
+            if (ActiveList.Count > 0)
+            {
+                PluginHelper.BigBoxMainViewModel.ShowGames(FilterType.PlatformOrCategoryOrPlaylist, firstItem.ItemDescription);
+            }
+        }
 
-        internal void setActiveList(List<String> names)
+        internal void SetActiveList(List<SelectorItem> items)
         {
             ActiveList.Clear();
-            foreach (string name in names)
+            foreach (SelectorItem item in items)
             {
-                ActiveList.Add(name);
-            }   
-            originalList = names;
+                ActiveList.Add(item);
+            }
+            OriginalList = items;
         }
 
-        internal void escapeKey()
-        {   
-            if(originalList.Count > 0)
+        internal void EscapeKey()
+        {
+            try
             {
-                if (!PluginHelper.StateManager.GetSelectedPlatform().Name.Equals(originalList[0]))
+                LogHelper.Log($"EscapeKey: {OriginalList?.Count ?? 0}");
+
+                if (OriginalList.Count > 0)
                 {
-                    PluginHelper.BigBoxMainViewModel.ShowGames(FilterType.PlatformOrCategoryOrPlaylist, originalList[0]);
+                    if (!PluginHelper.StateManager.GetSelectedPlatform().Name.Equals(OriginalList[0]))
+                    {
+                        PluginHelper.BigBoxMainViewModel.ShowGames(FilterType.PlatformOrCategoryOrPlaylist, OriginalList[0].ItemDescription);
+                    }
+                    ActiveList.Clear();
+                    foreach (SelectorItem item in OriginalList)
+                    {
+                        ActiveList.Add(item);
+                    }
                 }
-                ActiveList.Clear();
-                foreach (string name in originalList)
-                {
-                    ActiveList.Add(name);
-                }                
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogException(ex, "EscapeKey");
             }
         }
 
         //single instance across all views.
         #region singleton implementation 
         private static PlatformSelectorViewModel _instance;
-
         public static PlatformSelectorViewModel Instance()
         {
             if (_instance == null)
@@ -98,6 +274,4 @@ namespace BigBoxPCPSelector.ViewModel
         }
         #endregion
     }
-
-
 }

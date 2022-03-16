@@ -6,13 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Dependencies\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="Unbroken.LaunchBox.Plugins">
       <HintPath>Dependencies\Unbroken.LaunchBox.Plugins.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Dependencies\" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy &quot;$(TargetPath)&quot; &quot;C:\Users\Adam\Documents\LaunchBox\Themes\Unified Redux with PlatformDemo\Plugins\&quot; /K /D /H /Y /E" />
+  </Target>
 
 </Project>
