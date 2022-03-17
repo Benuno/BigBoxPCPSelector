@@ -17,6 +17,7 @@ namespace BigBoxPCPSelector.ViewModel
         public bool directionHold = false;
         public List<SelectorItem> OriginalList { get; set; }
         public bool switchPlatform = false;
+        public bool wheelActivateLock = true;
         public string startName = "";
 
         private PlatformSelectorViewModel()
@@ -97,6 +98,7 @@ namespace BigBoxPCPSelector.ViewModel
             {
                 if (switchPlatform == false) //necessary as pressing direction keys quickly after opening the plugin wheel triggers onselectionchanged for a game title.
                 {
+                    wheelActivateLock = false;
                     if (playlist != null)
                     {
                         if (playlist.Name.Equals(startName)) // otherwise performance penalty due to constant list recreation while holding down any direction key
@@ -206,9 +208,13 @@ namespace BigBoxPCPSelector.ViewModel
             }
             else
             {
-                switchPlatform = true;
-                setItemSelection(0, true);
-                return true;
+                if (!wheelActivateLock)
+                {
+                    switchPlatform = true;
+                    setItemSelection(0, true);
+                    return true;
+                }
+                return false;
             }
         }
 
@@ -217,13 +223,18 @@ namespace BigBoxPCPSelector.ViewModel
             if (switchPlatform)
             {
                 switchPlatform = false;
-                ShowPlatform(startName);
+                if (!startName.Equals(ActiveList[0].ItemDescription))
+                {
+                    wheelActivateLock = true;
+                    ShowPlatform(startName);
+                    OriginalList = new List<SelectorItem>();
+                }
                 setItemSelection(0, false);
-                OriginalList = new List<SelectorItem>();
                 return true;
             }
             else
             {
+                wheelActivateLock = true; //necessary or user unable to see wheel active when entering game detail and quickly pressing escape, makes quick exit possible
                 return false;
             }
         }
