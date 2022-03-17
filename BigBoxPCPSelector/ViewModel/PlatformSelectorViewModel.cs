@@ -14,7 +14,6 @@ namespace BigBoxPCPSelector.ViewModel
     {
         public ObservableCollection<SelectorItem> ActiveList { get; }
         public bool WheelIsActive { get; }
-        public bool directionHold = false;
         public List<SelectorItem> OriginalList { get; set; }
         public bool switchPlatform = false;
         public bool wheelActivateLock = true;
@@ -43,7 +42,6 @@ namespace BigBoxPCPSelector.ViewModel
 
         internal bool OnDown(bool held)
         {
-            directionHold = held;
             if (switchPlatform)
             {
                 switchPlatform = false;
@@ -55,7 +53,6 @@ namespace BigBoxPCPSelector.ViewModel
 
         internal bool OnUp(bool held)
         {
-            directionHold = held;
             if (switchPlatform)
             {
                 switchPlatform = false;
@@ -67,7 +64,6 @@ namespace BigBoxPCPSelector.ViewModel
 
         internal bool OnLeft(bool held)
         {
-            directionHold = held;
             if (switchPlatform)
             {
                 CycleLeft();
@@ -80,10 +76,14 @@ namespace BigBoxPCPSelector.ViewModel
         {
             return false;
         }
+        
+        internal bool OnPageUp()
+        {
+            return false;
+        }
 
         internal bool OnRight(bool held)
         {
-            directionHold = held;
             if (switchPlatform)
             {
                 CycleRight();
@@ -98,7 +98,10 @@ namespace BigBoxPCPSelector.ViewModel
             {
                 if (switchPlatform == false) //necessary as pressing direction keys quickly after opening the plugin wheel triggers onselectionchanged for a game title.
                 {
-                    wheelActivateLock = false;
+                    if (wheelActivateLock)
+                    {
+                        wheelActivateLock = false;
+                    }
                     if (playlist != null)
                     {
                         if (playlist.Name.Equals(startName)) // otherwise performance penalty due to constant list recreation while holding down any direction key
@@ -190,12 +193,6 @@ namespace BigBoxPCPSelector.ViewModel
                 LogHelper.LogException(ex, "OnSelectionChanged");
             }
         }
-
-        internal bool OnPageUp()
-        {
-            return false;
-        }
-
 
         internal bool OnEscape()
         {
