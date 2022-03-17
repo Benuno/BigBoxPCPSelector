@@ -14,9 +14,10 @@ namespace BigBoxPCPSelector.ViewModel
     {
         public ObservableCollection<SelectorItem> ActiveList { get; }
         public bool WheelIsActive { get; }
+        public bool directionHold = false;
         public List<SelectorItem> OriginalList { get; set; }
         public bool switchPlatform = false;
-        public string startName = null;
+        public string startName = "";
 
         private PlatformSelectorViewModel()
         {
@@ -41,22 +42,31 @@ namespace BigBoxPCPSelector.ViewModel
 
         internal bool OnDown(bool held)
         {
-            switchPlatform = false;
-            setItemSelection(0, false);
-            ResetSelectorPosition();
+            directionHold = held;
+            if (switchPlatform)
+            {
+                switchPlatform = false;
+                setItemSelection(0, false);
+                ResetSelectorPosition();
+            }
             return false;
         }
 
         internal bool OnUp(bool held)
         {
-            switchPlatform = false;
-            setItemSelection(0, false);
-            ResetSelectorPosition();
+            directionHold = held;
+            if (switchPlatform)
+            {
+                switchPlatform = false;
+                setItemSelection(0, false);
+                ResetSelectorPosition();
+            }
             return false;
         }
 
         internal bool OnLeft(bool held)
         {
+            directionHold = held;
             if (switchPlatform)
             {
                 CycleLeft();
@@ -72,6 +82,7 @@ namespace BigBoxPCPSelector.ViewModel
 
         internal bool OnRight(bool held)
         {
+            directionHold = held;
             if (switchPlatform)
             {
                 CycleRight();
@@ -88,6 +99,10 @@ namespace BigBoxPCPSelector.ViewModel
                 {
                     if (playlist != null)
                     {
+                        if (playlist.Name.Equals(startName)) // otherwise performance penalty due to constant list recreation while holding down any direction key
+                        {
+                            return;
+                        }
                         startName = playlist.Name;
 
                         IList<IPlaylist> childs = PluginHelper.DataManager.GetAllPlaylists();
@@ -126,6 +141,11 @@ namespace BigBoxPCPSelector.ViewModel
                     }
                     else
                     {
+
+                        if (platform.Name.Equals(startName))
+                        {
+                            return;
+                        }  
                         startName = platform.Name;
                         IList<IPlatform> childs = PluginHelper.DataManager.GetAllPlatforms();
 
