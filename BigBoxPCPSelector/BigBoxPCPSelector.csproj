@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -14,9 +14,5 @@
   <ItemGroup>
     <Folder Include="Dependencies\" />
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy &quot;$(TargetPath)&quot; &quot;C:\Users\Adam\Documents\LaunchBox\Themes\Unified Redux with PlatformDemo\Plugins\&quot; /K /D /H /Y /E" />
-  </Target>
 
 </Project>

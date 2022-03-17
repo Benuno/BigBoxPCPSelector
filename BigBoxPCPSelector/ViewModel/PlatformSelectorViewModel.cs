@@ -42,12 +42,16 @@ namespace BigBoxPCPSelector.ViewModel
         internal bool OnDown(bool held)
         {
             switchPlatform = false;
+            setItemSelection(0, false);
+            ResetSelectorPosition();
             return false;
         }
 
         internal bool OnUp(bool held)
         {
             switchPlatform = false;
+            setItemSelection(0, false);
+            ResetSelectorPosition();
             return false;
         }
 
@@ -80,81 +84,85 @@ namespace BigBoxPCPSelector.ViewModel
         {
             try
             {
-                if (playlist != null)
+                if (switchPlatform == false) //necessary as pressing direction keys quickly after opening the plugin wheel triggers onselectionchanged for a game title.
                 {
-                    startName = playlist.Name;
-
-                    IList<IPlaylist> childs = PluginHelper.DataManager.GetAllPlaylists();
-
-                    List<SelectorItem> items = new List<SelectorItem>();
-
-                    foreach (IPlaylist child in childs)
+                    if (playlist != null)
                     {
-                        items.Add(new SelectorItem()
+                        startName = playlist.Name;
+
+                        IList<IPlaylist> childs = PluginHelper.DataManager.GetAllPlaylists();
+
+                        List<SelectorItem> items = new List<SelectorItem>();
+
+                        foreach (IPlaylist child in childs)
                         {
-                            IsSelected = false,
-                            ItemDescription = child.Name,
-                            ItemType = SelectorItemType.Playlist
-                        });
-                    }
+                            items.Add(new SelectorItem()
+                            {
+                                IsSelected = false,
+                                ItemDescription = child.Name,
+                                ItemType = SelectorItemType.Playlist
+                            });
+                        }
 
-                    var itemQuery = from item in items
-                                    orderby item.ItemDescription
-                                    select item;
+                        var itemQuery = from item in items
+                                        orderby item.ItemDescription
+                                        select item;
 
-                    items = itemQuery.ToList();
+                        items = itemQuery.ToList();
 
-                    SelectorItem foundEntry = items.FirstOrDefault(item => item.ItemDescription == startName);
+                        SelectorItem foundEntry = items.FirstOrDefault(item => item.ItemDescription == startName);
 
-                    if (foundEntry != null && items.Count > 1)
-                    {
-                        int entryIndex = items.IndexOf(foundEntry);
-
-                        List<SelectorItem> addToEnd = items.GetRange(0, entryIndex);
-
-                        items.AddRange(addToEnd);
-                        items.RemoveRange(0, entryIndex);
-                    }
-
-                    SetActiveList(items);
-                }
-                else
-                {
-                    startName = platform.Name;
-                    IList<IPlatform> childs = PluginHelper.DataManager.GetAllPlatforms();
-
-                    List<SelectorItem> items = new List<SelectorItem>();
-                    foreach (IPlatform child in childs)
-                    {
-                        items.Add(new SelectorItem()
+                        if (foundEntry != null && items.Count > 1)
                         {
-                            IsSelected = false,
-                            ItemDescription = child.Name,
-                            ItemType = SelectorItemType.Platform
-                        });
+                            int entryIndex = items.IndexOf(foundEntry);
+
+                            List<SelectorItem> addToEnd = items.GetRange(0, entryIndex);
+
+                            items.AddRange(addToEnd);
+                            items.RemoveRange(0, entryIndex);
+                        }
+
+                        SetActiveList(items);
                     }
-
-                    var itemQuery = from item in items
-                                    orderby item.ItemDescription
-                                    select item;
-
-                    items = itemQuery.ToList();
-
-                    SelectorItem foundEntry = items.FirstOrDefault(item => item.ItemDescription == startName);
-
-                    if (foundEntry != null && items.Count > 1)
+                    else
                     {
-                        int entryIndex = items.IndexOf(foundEntry);
+                        startName = platform.Name;
+                        IList<IPlatform> childs = PluginHelper.DataManager.GetAllPlatforms();
 
-                        List<SelectorItem> addToEnd = items.GetRange(0, entryIndex);
+                        List<SelectorItem> items = new List<SelectorItem>();
+                        foreach (IPlatform child in childs)
+                        {
+                            items.Add(new SelectorItem()
+                            {
+                                IsSelected = false,
+                                ItemDescription = child.Name,
+                                ItemType = SelectorItemType.Platform
+                            });
+                        }
 
-                        items.AddRange(addToEnd);
-                        items.RemoveRange(0, entryIndex);
+                        var itemQuery = from item in items
+                                        orderby item.ItemDescription
+                                        select item;
+
+                        items = itemQuery.ToList();
+
+                        SelectorItem foundEntry = items.FirstOrDefault(item => item.ItemDescription == startName);
+
+                        if (foundEntry != null && items.Count > 1)
+                        {
+                            int entryIndex = items.IndexOf(foundEntry);
+
+                            List<SelectorItem> addToEnd = items.GetRange(0, entryIndex);
+
+                            items.AddRange(addToEnd);
+                            items.RemoveRange(0, entryIndex);
+                        }
+
+                        SetActiveList(items);
                     }
-
-                    SetActiveList(items);
                 }
             }
+                
             catch(Exception ex)
             {
                 LogHelper.LogException(ex, "OnSelectionChanged");
@@ -172,7 +180,8 @@ namespace BigBoxPCPSelector.ViewModel
             if (switchPlatform)
             {
                 switchPlatform = false;
-                EscapeKey();
+                setItemSelection(0, false);
+                ResetSelectorPosition();
                 return false;
             }
             else
@@ -189,6 +198,8 @@ namespace BigBoxPCPSelector.ViewModel
             {
                 switchPlatform = false;
                 ShowPlatform(startName);
+                setItemSelection(0, false);
+                OriginalList = new List<SelectorItem>();
                 return true;
             }
             else
@@ -236,18 +247,14 @@ namespace BigBoxPCPSelector.ViewModel
             OriginalList = items;
         }
 
-        internal void EscapeKey()
+        internal void ResetSelectorPosition()
         {
             try
             {
-                LogHelper.Log($"EscapeKey: {OriginalList?.Count ?? 0}");
+                LogHelper.Log($"ResetSelectorPosition: {OriginalList?.Count ?? 0}");
 
                 if (OriginalList.Count > 0)
                 {
-                    if (!PluginHelper.StateManager.GetSelectedPlatform().Name.Equals(OriginalList[0]))
-                    {
-                        PluginHelper.BigBoxMainViewModel.ShowGames(FilterType.PlatformOrCategoryOrPlaylist, OriginalList[0].ItemDescription);
-                    }
                     ActiveList.Clear();
                     foreach (SelectorItem item in OriginalList)
                     {
@@ -257,7 +264,7 @@ namespace BigBoxPCPSelector.ViewModel
             }
             catch (Exception ex)
             {
-                LogHelper.LogException(ex, "EscapeKey");
+                LogHelper.LogException(ex, "ResetSelectorPosition");
             }
         }
 
