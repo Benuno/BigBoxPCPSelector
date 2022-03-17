@@ -13,27 +13,59 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding ItemDescription}"                                
-                               Margin="15,5,15,0">
-                        <TextBlock.Style>
-                            <Style TargetType="{x:Type TextBlock}">
+                    <Border Margin="5" Padding="5" BorderThickness="1" CornerRadius="40" SnapsToDevicePixels="True">
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="BorderBrush" Value="Transparent"/>
                                 <Setter Property="Background" Value="Transparent"/>
-                                <Setter Property="Foreground" Value="#D3D3D3"/>
-                                <Setter Property="FontWeight" Value="Normal"/>
-                                <Setter Property="FontSize" Value="30"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsSelected}" Value="True" >
+                                        <Setter Property="BorderBrush" Value="White"/>
                                         <Setter Property="Background" Value="White"/>
-                                        <Setter Property="Foreground" Value="Black"/>
-                                        <Setter Property="FontWeight" Value="ExtraBold"/>
-                                        <Setter Property="FontSize" Value="40"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
+                        </Border.Style>
+                        <TextBlock Text="{Binding ItemDescription}" Margin="15,5,15,0">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Foreground" Value="#D3D3D3"/>
+                                    <Setter Property="FontWeight" Value="Normal"/>
+                                    <Setter Property="FontSize" Value="30"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSelected}" Value="True" >
+                                            <Setter Property="Foreground" Value="Black"/>
+                                            <Setter Property="FontWeight" Value="ExtraBold"/>
+                                            <Setter Property="FontSize" Value="35"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <Grid.Style>
+            <Style TargetType="{x:Type Grid}">
+                <Setter Property="Visibility" Value="Visible"/>
+                <Style.Triggers>
+                    <Trigger Property="Visibility" Value="Visible">
+                    <Trigger.EnterActions>
+                            <BeginStoryboard x:Name="FadePCPSelector" HandoffBehavior="Compose">
+                                <Storyboard AutoReverse="False" >
+                                    <DoubleAnimation BeginTime="0:0:0.0" Storyboard.TargetProperty="Opacity"
+                                                             To="0.0" 
+                                                             Duration="0:0:0.0"/>
+                                    <DoubleAnimation BeginTime="0:0:2.0" Storyboard.TargetProperty="Opacity"
+                                                             From="0.0" To="1.0" 
+                                                             Duration="0:0:0.8"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                </Trigger>
+                    </Style.Triggers>
+            </Style>
+            </Grid.Style>
     </Grid>
 </UserControl>
