@@ -3,14 +3,16 @@ using BigBoxPCPSelector.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
+using System.Windows;
+using System.Windows.Media;
 using Unbroken.LaunchBox.Plugins;
 using Unbroken.LaunchBox.Plugins.Data;
 
 namespace BigBoxPCPSelector.ViewModel
 {
-    public sealed class PlatformSelectorViewModel
+    public sealed class PlatformSelectorViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<SelectorItem> ActiveList { get; }
         public bool WheelIsActive { get; }
@@ -38,6 +40,7 @@ namespace BigBoxPCPSelector.ViewModel
                 setItemSelection(0, true);
             }
         }
+
 
         internal bool OnDown(bool held)
         {
@@ -166,7 +169,6 @@ namespace BigBoxPCPSelector.ViewModel
             return false;
         }
 
-
         internal bool OnEscape()
         {
             if (switchPlatform)
@@ -261,6 +263,97 @@ namespace BigBoxPCPSelector.ViewModel
             }
         }
 
+
+        #region Dependency Properties
+        private double itemFontSize;
+        public double ItemFontSize
+        {
+            get => itemFontSize;
+            set
+            {
+                itemFontSize = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("ItemFontSize"));
+            }
+        }
+
+        private FontWeight itemFontWeight;
+        public FontWeight ItemFontWeight
+        {
+            get => itemFontWeight;
+            set
+            {
+                itemFontWeight = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("ItemFontWeight"));
+            }
+        }
+
+        private Brush itemBackgroundBrush;
+        public Brush ItemBackgroundBrush
+        {
+            get => itemBackgroundBrush;
+            set
+            {
+                itemBackgroundBrush = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("ItemBackgroundBrush"));
+            }
+        }
+
+        private Brush itemForegroundBrush;
+        public Brush ItemForegroundBrush
+        {
+            get => itemForegroundBrush;
+            set
+            {
+                itemForegroundBrush = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("ItemForegroundBrush"));
+            }
+        }
+
+        private double selectedFontSize;
+        public double SelectedFontSize
+        {
+            get => selectedFontSize;
+            set
+            {
+                selectedFontSize = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("SelectedFontSize"));
+            }
+        }
+
+        private FontWeight selectedFontWeight;
+        public FontWeight SelectedFontWeight
+        {
+            get => selectedFontWeight;
+            set
+            {
+                selectedFontWeight = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("SelectedFontWeight"));
+            }
+        }
+
+        private Brush selectedBackgroundBrush;
+        public Brush SelectedBackgroundBrush
+        {
+            get => selectedBackgroundBrush;
+            set
+            {
+                selectedBackgroundBrush = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("SelectedBackgroundBrush"));
+            }
+        }
+
+        private Brush selectedForegroundBrush;
+        public Brush SelectedForegroundBrush
+        {
+            get => selectedForegroundBrush;
+            set
+            {
+                selectedForegroundBrush = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("SelectedForegroundBrush"));
+            }
+        }
+        #endregion
+
         //single instance across all views.
         #region singleton implementation 
         private static PlatformSelectorViewModel _instance;
@@ -273,5 +366,7 @@ namespace BigBoxPCPSelector.ViewModel
             return _instance;
         }
         #endregion
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
     }
 }
