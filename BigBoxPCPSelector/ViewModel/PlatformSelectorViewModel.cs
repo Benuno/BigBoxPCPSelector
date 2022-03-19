@@ -17,8 +17,8 @@ namespace BigBoxPCPSelector.ViewModel
         public ObservableCollection<SelectorItem> ActiveList { get; }
         public bool WheelIsActive { get; }
         public List<SelectorItem> OriginalList { get; set; }
-        public List<SelectorItem> OriginalPlatforms { get; set; }
-        public List<SelectorItem> OriginalPlaylists { get; set; }
+        public List<SelectorItem> OriginalPlatforms { get; }
+        public List<SelectorItem> OriginalPlaylists { get; }
         public bool switchPlatform = false;
         public bool wheelActivateLock = true;
         public string startName = "";
