@@ -15,6 +15,8 @@ namespace BigBoxPCPSelector.ViewModel
         public ObservableCollection<SelectorItem> ActiveList { get; }
         public bool WheelIsActive { get; }
         public List<SelectorItem> OriginalList { get; set; }
+        public List<SelectorItem> OriginalPlatforms { get; set; }
+        public List<SelectorItem> OriginalPlaylists { get; set; }
         public bool switchPlatform = false;
         public bool wheelActivateLock = true;
         public string startName = "";
@@ -23,6 +25,50 @@ namespace BigBoxPCPSelector.ViewModel
         {
             ActiveList = new ObservableCollection<SelectorItem>();
             OriginalList = new List<SelectorItem>();
+
+            //Playlist initialize
+            IList<IPlaylist> childspl = PluginHelper.DataManager.GetAllPlaylists();
+
+            OriginalPlaylists = new List<SelectorItem>();
+
+            foreach (IPlaylist child in childspl)
+            {
+                OriginalPlaylists.Add(new SelectorItem()
+                {
+                    IsSelected = false,
+                    ItemDescription = child.Name,
+                    ItemType = SelectorItemType.Playlist
+                });
+            }
+
+            var itemQuery = from item in OriginalPlaylists
+                            orderby item.ItemDescription
+                            select item;
+
+            OriginalPlaylists = itemQuery.ToList();
+
+
+
+            //platforms initialize
+            IList<IPlatform> childs = PluginHelper.DataManager.GetAllPlatforms();
+
+            OriginalPlatforms = new List<SelectorItem>();
+            foreach (IPlatform child in childs)
+            {
+                OriginalPlatforms.Add(new SelectorItem()
+                {
+                    IsSelected = false,
+                    ItemDescription = child.Name,
+                    ItemType = SelectorItemType.Platform
+                });
+            }
+
+            var itemQueryPr = from item in OriginalPlatforms
+                            orderby item.ItemDescription
+                            select item;
+
+            OriginalPlatforms = itemQueryPr.ToList();
+
             WheelIsActive = true;
         }
 
@@ -47,6 +93,7 @@ namespace BigBoxPCPSelector.ViewModel
                 switchPlatform = false;
                 setItemSelection(0, false);
                 ResetSelectorPosition();
+                return true;
             }
             return false;
         }
@@ -58,6 +105,15 @@ namespace BigBoxPCPSelector.ViewModel
                 switchPlatform = false;
                 setItemSelection(0, false);
                 ResetSelectorPosition();
+                if(ActiveList[0].ItemType == SelectorItemType.Platform)
+                {
+                    ShowPlatform(0, OriginalPlaylists);
+                }
+                else
+                {
+                    ShowPlatform(0, OriginalPlatforms);
+                }
+                return true;
             }
             return false;
         }
@@ -74,11 +130,33 @@ namespace BigBoxPCPSelector.ViewModel
 
         internal bool OnPageDown()
         {
+            if (!wheelActivateLock)
+            {
+                wheelActivateLock = true;
+                if (switchPlatform)
+                {
+                    switchPlatform = false;
+                    setItemSelection(0, false);
+                }
+                ShowPlatform(0,OriginalPlaylists);
+                return true;
+            }
             return false;
         }
         
         internal bool OnPageUp()
         {
+            if (!wheelActivateLock)
+            {
+                wheelActivateLock = true;
+                if (switchPlatform)
+                {
+                    switchPlatform = false;
+                    setItemSelection(0, false);
+                }
+                ShowPlatform(0, OriginalPlatforms);
+                return true;
+            }
             return false;
         }
 
@@ -102,6 +180,7 @@ namespace BigBoxPCPSelector.ViewModel
                     {
                         wheelActivateLock = false;
                     }
+                    List<SelectorItem> outputPCP = new List<SelectorItem>();
                     if (playlist != null)
                     {
                         if (playlist.Name.Equals(startName)) // otherwise performance penalty due to constant list recreation while holding down any direction key
@@ -110,81 +189,29 @@ namespace BigBoxPCPSelector.ViewModel
                         }
                         startName = playlist.Name;
 
-                        IList<IPlaylist> childs = PluginHelper.DataManager.GetAllPlaylists();
+                        outputPCP = OriginalPlaylists;
 
-                        List<SelectorItem> items = new List<SelectorItem>();
-
-                        foreach (IPlaylist child in childs)
-                        {
-                            items.Add(new SelectorItem()
-                            {
-                                IsSelected = false,
-                                ItemDescription = child.Name,
-                                ItemType = SelectorItemType.Playlist
-                            });
-                        }
-
-                        var itemQuery = from item in items
-                                        orderby item.ItemDescription
-                                        select item;
-
-                        items = itemQuery.ToList();
-
-                        SelectorItem foundEntry = items.FirstOrDefault(item => item.ItemDescription == startName);
-
-                        if (foundEntry != null && items.Count > 1)
-                        {
-                            int entryIndex = items.IndexOf(foundEntry);
-
-                            List<SelectorItem> addToEnd = items.GetRange(0, entryIndex);
-
-                            items.AddRange(addToEnd);
-                            items.RemoveRange(0, entryIndex);
-                        }
-
-                        SetActiveList(items);
-                    }
-                    else
-                    {
+                    } else {
 
                         if (platform.Name.Equals(startName))
                         {
                             return;
                         }  
                         startName = platform.Name;
-                        IList<IPlatform> childs = PluginHelper.DataManager.GetAllPlatforms();
 
-                        List<SelectorItem> items = new List<SelectorItem>();
-                        foreach (IPlatform child in childs)
-                        {
-                            items.Add(new SelectorItem()
-                            {
-                                IsSelected = false,
-                                ItemDescription = child.Name,
-                                ItemType = SelectorItemType.Platform
-                            });
-                        }
-
-                        var itemQuery = from item in items
-                                        orderby item.ItemDescription
-                                        select item;
-
-                        items = itemQuery.ToList();
-
-                        SelectorItem foundEntry = items.FirstOrDefault(item => item.ItemDescription == startName);
-
-                        if (foundEntry != null && items.Count > 1)
-                        {
-                            int entryIndex = items.IndexOf(foundEntry);
-
-                            List<SelectorItem> addToEnd = items.GetRange(0, entryIndex);
-
-                            items.AddRange(addToEnd);
-                            items.RemoveRange(0, entryIndex);
-                        }
-
-                        SetActiveList(items);
+                        outputPCP = OriginalPlatforms;
+                        
                     }
+                    SelectorItem foundEntry = outputPCP.FirstOrDefault(item => item.ItemDescription == startName);
+
+                    if (foundEntry != null && outputPCP.Count > 1)
+                    {
+                        int entryIndex = outputPCP.IndexOf(foundEntry);
+                        outputPCP.AddRange(outputPCP.GetRange(0, entryIndex));
+                        outputPCP.RemoveRange(0, entryIndex);
+                    }
+
+                    SetActiveList(outputPCP);
                 }
             }
                 
@@ -223,7 +250,7 @@ namespace BigBoxPCPSelector.ViewModel
                 if (!startName.Equals(ActiveList[0].ItemDescription))
                 {
                     wheelActivateLock = true;
-                    ShowPlatform(startName);
+                    ShowPlatform(0,ActiveList.ToList());
                     OriginalList = new List<SelectorItem>();
                 }
                 setItemSelection(0, false);
@@ -256,12 +283,15 @@ namespace BigBoxPCPSelector.ViewModel
             item.IsSelected = selected;
         }
 
-        internal void ShowPlatform(string startName)
+        internal void ShowPlatform(int index, List<SelectorItem> list)
         {
-            SelectorItem firstItem = ActiveList[0];
-            if (ActiveList.Count > 0)
+            SelectorItem firstItem = list[index];
+            if (list.Count > 0 && !OriginalList[0].ItemDescription.Equals(firstItem.ItemDescription))
             {
                 PluginHelper.BigBoxMainViewModel.ShowGames(FilterType.PlatformOrCategoryOrPlaylist, firstItem.ItemDescription);
+            } else
+            {
+                wheelActivateLock = false;
             }
         }
 
