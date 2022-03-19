@@ -3,69 +3,81 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:BigBoxPCPSelector.View">
-    <Grid ClipToBounds="True">
-        <ItemsControl ItemsSource="{Binding ActiveList}" Height="60" SnapsToDevicePixels="True">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Border Margin="5,4,5,0" Padding="0" BorderThickness="1" CornerRadius="20" SnapsToDevicePixels="True">
-                        <Border.Style>
-                            <Style TargetType="{x:Type Border}">
-                                <Setter Property="BorderBrush" Value="Transparent"/>
-                                <Setter Property="Background" Value="Transparent"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsSelected}" Value="True" >
-                                        <Setter Property="BorderBrush" Value="White"/>
-                                        <Setter Property="Background" Value="White"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
-                        <TextBlock Text="{Binding ItemDescription}" Margin="15,0,15,0">
-                            <TextBlock.Style>
-                                <Style TargetType="{x:Type TextBlock}">
-                                    <Setter Property="Foreground" Value="#D3D3D3"/>
-                                    <Setter Property="FontWeight" Value="Normal"/>
-                                    <Setter Property="FontSize" Value="30"/>
+             xmlns:local="clr-namespace:BigBoxPCPSelector.View"
+             Name="PlatformSelectorUserControl">
+    <Canvas Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
+            Width="{Binding ActualWidth, ElementName=PlatformSelectorUserControl}"
+            Height="{Binding ActualHeight, ElementName=PlatformSelectorUserControl}">
+        <Grid>
+            <ItemsControl ItemsSource="{Binding ActiveList}"
+                          SnapsToDevicePixels="True">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="5,4,5,0" Padding="0" BorderThickness="1" CornerRadius="20" SnapsToDevicePixels="True">
+                            <Border.Style>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="Background" Value="Transparent"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsSelected}" Value="True" >
-                                            <Setter Property="Foreground" Value="Black"/>
-                                            <Setter Property="FontWeight" Value="ExtraBold"/>
-                                            <Setter Property="FontSize" Value="35"/>
+                                            <Setter Property="BorderBrush" Value="White"/>
+                                            <Setter Property="Background" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="{Binding ItemDescription}"  
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   TextAlignment="Center"
+                                   Margin="15,5,15,0">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemBackgroundBrush}"/>
+                                    <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemForegroundBrush}"/>
+                                    <Setter Property="FontWeight" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemFontWeight}"/>
+                                    <Setter Property="FontSize" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemFontSize}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedBackgroundBrush}"/>
+                                            <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedForegroundBrush}"/>
+                                            <Setter Property="FontWeight" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedFontWeight}"/>
+                                            <Setter Property="FontSize" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedFontSize}"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <Grid.Style>
-            <Style TargetType="{x:Type Grid}">
-                <Setter Property="Visibility" Value="Visible"/>
-                <Style.Triggers>
-                    <Trigger Property="Visibility" Value="Visible">
-                    <Trigger.EnterActions>
-                            <BeginStoryboard x:Name="FadePCPSelector" HandoffBehavior="Compose">
-                                <Storyboard AutoReverse="False" >
-                                    <DoubleAnimation BeginTime="0:0:0.0" Storyboard.TargetProperty="Opacity"
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Setter Property="Visibility" Value="Visible"/>
+                    <Style.Triggers>
+                        <Trigger Property="Visibility" Value="Visible">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard x:Name="FadePCPSelector" HandoffBehavior="Compose">
+                                    <Storyboard AutoReverse="False" >
+                                        <DoubleAnimation BeginTime="0:0:0.0" Storyboard.TargetProperty="Opacity"
                                                              To="0.0" 
                                                              Duration="0:0:0.0"/>
-                                    <DoubleAnimation BeginTime="0:0:1.2" Storyboard.TargetProperty="Opacity"
+                                        <DoubleAnimation BeginTime="0:0:1.2" Storyboard.TargetProperty="Opacity"
                                                              From="0.0" To="1.0" 
                                                              Duration="0:0:0.8"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </Trigger.EnterActions>
-                </Trigger>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                        </Trigger>
                     </Style.Triggers>
-            </Style>
+                </Style>
             </Grid.Style>
-    </Grid>
+        </Grid>
+    </Canvas>
 </UserControl>
