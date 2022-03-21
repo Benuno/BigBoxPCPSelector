@@ -105,11 +105,12 @@ namespace BigBoxPCPSelector.ViewModel
         {
             if (switchPlatform)
             {
+                wheelActivateLock = true;
                 switchPlatform = false;
                 setItemSelection(0, false);
                 ResetSelectorPosition();
                 if(ActiveList[0].ItemType == SelectorItemType.Platform)
-                {
+                {                    
                     ShowPlatform(0, OriginalPlaylists);
                 }
                 else
@@ -179,10 +180,6 @@ namespace BigBoxPCPSelector.ViewModel
             {
                 if (switchPlatform == false) //necessary as pressing direction keys quickly after opening the plugin wheel triggers onselectionchanged for a game title.
                 {
-                    if (wheelActivateLock)
-                    {
-                        wheelActivateLock = false;
-                    }
                     List<SelectorItem> outputPCP = new List<SelectorItem>();
                     if (playlist != null)
                     {
@@ -222,6 +219,10 @@ namespace BigBoxPCPSelector.ViewModel
             {
                 LogHelper.LogException(ex, "OnSelectionChanged");
             }
+            if (wheelActivateLock)
+            {
+                wheelActivateLock = false;
+            }
         }
 
         internal bool OnEscape()
@@ -241,6 +242,7 @@ namespace BigBoxPCPSelector.ViewModel
                     setItemSelection(0, true);
                     return true;
                 }
+                wheelActivateLock = false;
                 return false;
             }
         }
