@@ -18,15 +18,21 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="5,5,5,0" Padding="0" BorderThickness="1" CornerRadius="20" SnapsToDevicePixels="True">
+                        <Border>
                             <Border.Style>
                                 <Style TargetType="{x:Type Border}">
-                                    <Setter Property="BorderBrush" Value="Transparent"/>
-                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Margin" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemBorderMargin}"/>
+                                    <Setter Property="CornerRadius" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemBorderCornerRadius}"/>
+                                    <Setter Property="BorderThickness" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemBorderThickness}"/>
+                                    <Setter Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemBorderBrush}"/>
+                                    <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemBorderBackgroundBrush}"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsSelected}" Value="True" >
-                                            <Setter Property="BorderBrush" Value="White"/>
-                                            <Setter Property="Background" Value="White"/>
+                                            <Setter Property="Margin" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedBorderMargin}"/>
+                                            <Setter Property="CornerRadius" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedCornerRadius}"/>
+                                            <Setter Property="BorderThickness" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedBorderThickness}"/>
+                                            <Setter Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedBorderBrush}"/>
+                                            <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedBorderBackgroundBrush}"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -34,25 +40,28 @@
                             <TextBlock Text="{Binding ItemDescription}"  
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
-                                   TextAlignment="Center"
-                                   Margin="15,0,15,0">
-                            <TextBlock.Style>
-                                <Style TargetType="{x:Type TextBlock}">
-                                    <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemBackgroundBrush}"/>
-                                    <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemForegroundBrush}"/>
-                                    <Setter Property="FontWeight" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemFontWeight}"/>
-                                    <Setter Property="FontSize" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemFontSize}"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                            <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedBackgroundBrush}"/>
-                                            <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedForegroundBrush}"/>
-                                            <Setter Property="FontWeight" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedFontWeight}"/>
-                                            <Setter Property="FontSize" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedFontSize}"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
+                                   TextAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Margin" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemMargin}"/>
+                                        <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemBackgroundBrush}"/>
+                                        <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemForegroundBrush}"/>
+                                        <Setter Property="FontWeight" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemFontWeight}"/>
+                                        <Setter Property="FontSize" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemFontSize}"/>
+                                        <Setter Property="FontFamily" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.ItemFontFamily}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                <Setter Property="Margin" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedMargin}"/>
+                                                <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedBackgroundBrush}"/>
+                                                <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedForegroundBrush}"/>
+                                                <Setter Property="FontWeight" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedFontWeight}"/>
+                                                <Setter Property="FontSize" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedFontSize}"/>
+                                                <Setter Property="FontFamily" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.SelectedFontFamily}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

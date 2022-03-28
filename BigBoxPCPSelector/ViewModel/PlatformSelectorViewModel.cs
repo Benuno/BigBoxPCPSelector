@@ -333,6 +333,28 @@ namespace BigBoxPCPSelector.ViewModel
 
 
         #region Dependency Properties
+        private int numberToDisplay;
+        public int NumberToDisplay
+        {
+            get => numberToDisplay;
+            set
+            {
+                numberToDisplay = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("NumberToDisplay"));
+            }
+        }
+
+        private FontFamily itemFontFamily;
+        public FontFamily ItemFontFamily
+        {
+            get => itemFontFamily;
+            set
+            {
+                itemFontFamily = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("ItemFontFamily"));
+            }
+        }
+
         private double itemFontSize;
         public double ItemFontSize
         {
@@ -377,6 +399,86 @@ namespace BigBoxPCPSelector.ViewModel
             }
         }
 
+        private Brush itemBorderBrush;
+        public Brush ItemBorderBrush
+        {
+            get => itemBorderBrush;
+            set
+            {
+                itemBorderBrush = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("ItemBorderBrush"));
+            }
+        }
+
+        private Thickness itemBorderThickness;
+        public Thickness ItemBorderThickness
+        {
+            get => itemBorderThickness;
+            set
+            {
+                itemBorderThickness = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("ItemBorderThickness"));
+            }
+        }
+
+        private Thickness itemBorderMargin;
+        public Thickness ItemBorderMargin
+        {
+            get => itemBorderMargin;
+            set
+            {
+                itemBorderMargin = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("ItemBorderMargin"));
+            }
+        }
+
+        private Thickness itemMargin;
+        public Thickness ItemMargin
+        {
+            get => itemMargin;
+            set
+            {
+                itemMargin = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("ItemMargin"));
+            }
+        }
+
+
+        private Brush itemBorderBackgroundBrush;
+        public Brush ItemBorderBackgroundBrush
+        {
+            get => itemBorderBackgroundBrush;
+            set
+            {
+                itemBorderBackgroundBrush = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("ItemBorderBackgroundBrush"));
+            }
+        }
+
+        private CornerRadius itemBorderCornerRadius;
+        public CornerRadius ItemBorderCornerRadius
+        {
+            get => itemBorderCornerRadius;
+            set
+            {
+                itemBorderCornerRadius = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("ItemBorderCornerRadius"));
+            }
+        }
+
+
+        private FontFamily selectedFontFamily;
+        public FontFamily SelectedFontFamily
+        {
+            get => selectedFontFamily;
+            set
+            {
+                selectedFontFamily = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("SelectedFontFamily"));
+            }
+        }
+
+
         private double selectedFontSize;
         public double SelectedFontSize
         {
@@ -418,6 +520,72 @@ namespace BigBoxPCPSelector.ViewModel
             {
                 selectedForegroundBrush = value;
                 PropertyChanged(this, new PropertyChangedEventArgs("SelectedForegroundBrush"));
+            }
+        }
+
+        private Brush selectedBorderBrush;
+        public Brush SelectedBorderBrush
+        {
+            get => selectedBorderBrush;
+            set
+            {
+                selectedBorderBrush = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("SelectedBorderBrush"));
+            }
+        }
+
+        private Brush selectedBorderBackgroundBrush;
+        public Brush SelectedBorderBackgroundBrush
+        {
+            get => selectedBorderBackgroundBrush;
+            set
+            {
+                selectedBorderBackgroundBrush = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("SelectedBorderBackgroundBrush"));
+            }
+        }
+
+        private Thickness selectedBorderThickness;
+        public Thickness SelectedBorderThickness
+        {
+            get => selectedBorderThickness;
+            set
+            {
+                selectedBorderThickness = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("SelectedBorderThickness"));
+            }
+        }
+
+        private CornerRadius selectedCornerRadius;
+        public CornerRadius SelectedCornerRadius
+        {
+            get => selectedCornerRadius;
+            set
+            {
+                selectedCornerRadius = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("SelectedCornerRadius"));
+            }
+        }
+
+        private Thickness selectedBorderMargin;
+        public Thickness SelectedBorderMargin
+        {
+            get => selectedBorderMargin;
+            set
+            {
+                selectedBorderMargin = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("SelectedBorderMargin"));
+            }
+        }
+
+        private Thickness selectedMargin;
+        public Thickness SelectedMargin
+        {
+            get => selectedMargin;
+            set
+            {
+                selectedMargin = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("SelectedMargin"));
             }
         }
         #endregion

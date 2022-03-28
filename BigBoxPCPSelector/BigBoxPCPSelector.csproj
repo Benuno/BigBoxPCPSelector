@@ -15,4 +15,8 @@
     <Folder Include="Dependencies\" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="XCOPY &quot;$(TargetPath)&quot; &quot;C:\Users\Adam\Downloads\Benuno Stuff\LaunchBox\Themes\SCALA\Plugins\&quot; /K /D /H /Y /E&#xD;&#xA;XCOPY &quot;$(TargetPath)&quot; &quot;C:\Users\Adam\Documents\LaunchBox\Themes\Unified Redux with PlatformDemo\Plugins\&quot; /K /D /H /Y /E&#xD;&#xA;XCOPY &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;C:\Users\Adam\Downloads\Benuno Stuff\LaunchBox\Themes\SCALA\Plugins\&quot; /K /D /H /Y /E&#xD;&#xA;XCOPY &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;C:\Users\Adam\Documents\LaunchBox\Themes\Unified Redux with PlatformDemo\Plugins\&quot; /K /D /H /Y /E&#xD;&#xA;" />
+  </Target>
+
 </Project>
